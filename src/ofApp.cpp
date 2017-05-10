@@ -7,12 +7,15 @@
 float widen = 0.0;
 float laborWidth = 0.0;
 float leisureWidth = LEISURE_X;
+float leisureScale;
+float laborScale;
 
 int wh, ww, whMiddle, wwMiddle, textAlpha, _time;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetWindowShape(1920, 1080);
+//    ofSetWindowShape(1920, 1080);
+    ofSetWindowShape(1440, 800);
     ofBackground(0);
     ofEnableAlphaBlending();
     wh = ofGetWindowHeight();
@@ -21,9 +24,11 @@ void ofApp::setup(){
     wwMiddle = ww / 2;
     textAlpha = 255;
     
-    
     leisureFbo.allocate(ww, wh);
     laborFbo.allocate(ww, wh);
+    
+    
+    
     
     track.load("11.mp3");
     
@@ -34,6 +39,12 @@ void ofApp::setup(){
     go4.load("g4.jpg");
     labor.load("labor.png");
     leisure.load("leisure.png");
+    white.load("white.png");
+    
+    
+    
+    
+    
 //    track.setSpeed(0.1f);
 //    mask.clear();
 //    mask.begin();
@@ -46,14 +57,13 @@ void ofApp::setup(){
     track.play();
     setSoundPos = 0;
     
-//    labor.draw(0,0);
 //    leisure.draw(0, 851);
     
-    laborMask = new ofxAlphaMaskTexture(go4.getTexture(),
+    laborMask = new ofxAlphaMaskTexture(white.getTexture(),
                                     laborFbo.getTexture(),
                                     labor.getTexture());
     
-    leisureMask = new ofxAlphaMaskTexture(go4.getTexture(),leisureFbo.getTexture(),                                          leisureFbo.getTexture());
+    leisureMask = new ofxAlphaMaskTexture(white.getTexture(),leisureFbo.getTexture(),                                          leisure.getTexture());
     
     
     
@@ -65,11 +75,15 @@ void ofApp::update(){
     widen+= 0.01;
     
     laborWidth += 1.0;
+    laborScale = ofMap(laborWidth, 1, LABOR_X, 0.01, 1.0);
     
 //    setSoundPos = 0.001;
     
     leisureWidth = LEISURE_X - laborWidth;
     
+    
+    leisureScale = ofMap(leisureWidth, 1, LEISURE_X, 0.01, 1.0);
+//    leisureScale = ofMap(
     track.setSpeed(ofClamp(ofMap(leisureWidth, 1.0, LEISURE_X, 0.1, 1.0), 0.1, 1.0));
 
     
@@ -85,8 +99,9 @@ void ofApp::draw(){
     
     
 //    mask.allocate(ofGetWindowWidth(), ofGetWindowHeight(), GL_LUMINANCE);
-    laborFbo.clear();
-    leisureFbo.clear();
+   
+    
+    
 //    mask.begin();
     
 //    ofSetColor(0, 0, 0);
@@ -117,7 +132,41 @@ void ofApp::draw(){
 //     fonts[1].drawString("LEISURE", ofGetWindowWidth()/2 + 20, ofGetWindowHeight() - 40);
 //    ofPopMatrix();
 //    go4.getTexture().setAlphaMask(mask.getTexture());
+    ofClear(0);
+    
+    laborFbo.clear();
+    laborFbo.begin();
+    ofBackground(0);
+    labor.draw(0, 0, ww, wh);
+    laborFbo.end();
+    ofClear(0);
+    
+        leisureFbo.clear();
+        leisureFbo.begin();
+            ofBackground(0);
+            leisure.draw(LABOR_X,0, ww, wh);
+        leisureFbo.end();
+     ofClear(0);
+    
+    ofPushMatrix();
+//        ofTranslate(500, 0);
+        ofScale(ofClamp(leisureScale, 0.1, 2.44), 2.44);
+        leisureMask->draw(500, 0);
+    ofPopMatrix();
+    
+    
+    ofPushMatrix();
+        ofScale(ofClamp(laborScale, 0.1, 2.44), 2.44);
+        laborMask->draw(0,0);
+    ofPopMatrix();
+    
+    
+
+   
+   
+
     if (_time < 10) {
+        ofClear(0);
         ofSetBackgroundColor(0,0,0,textAlpha);
         ofSetColor(255,255,255, textAlpha);
         fonts[0].drawString("HIT SPACEBAR TO GAIN FREE TIME", 220, whMiddle + 50 );
@@ -128,6 +177,7 @@ void ofApp::draw(){
             }
         }
     }
+
     
 //    ofLogNotice(ofToString(_time));
     
@@ -135,14 +185,15 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key == ' ') {
-        laborWidth -= 15.0;
-    }
+    
 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
+    if (key == ' ') {
+        laborWidth -= 13.0;
+    }
 
 }
 

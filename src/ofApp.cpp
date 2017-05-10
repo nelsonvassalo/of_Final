@@ -6,7 +6,7 @@
 
 float widen = 0.0;
 float laborWidth = 0.0;
-float leisureWidth = 0.0;
+float leisureWidth = LEISURE_X;
 
 int wh, ww, whMiddle, wwMiddle, textAlpha, _time;
 
@@ -22,8 +22,8 @@ void ofApp::setup(){
     textAlpha = 255;
     
     
-    leisureFbo.allocate(LEISURE_X, wh);
-    laborFbo.allocate(LABOR_X, wh);
+    leisureFbo.allocate(ww, wh);
+    laborFbo.allocate(ww, wh);
     
     track.load("11.mp3");
     
@@ -39,6 +39,9 @@ void ofApp::setup(){
 //    mask.begin();
 //        fonts[0].drawString("LABOR", 20, ofGetWindowHeight() - 40);
 //    mask.end();
+    
+    
+
     
     track.play();
     setSoundPos = 0;
@@ -61,22 +64,29 @@ void ofApp::setup(){
 void ofApp::update(){
     widen+= 0.01;
     
+    laborWidth += 1.0;
+    
 //    setSoundPos = 0.001;
-    track.setSpeed(ofClamp(laborWidth, 1.0, 0.1));
     
     leisureWidth = LEISURE_X - laborWidth;
     
+    track.setSpeed(ofClamp(ofMap(leisureWidth, 1.0, LEISURE_X, 0.1, 1.0), 0.1, 1.0));
+
     
     _time = ofGetElapsedTimef();
-
+//    ofLogNotice(ofToString(leisureWidth,laborWidth));
 }
 
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
+    
+    
+    
 //    mask.allocate(ofGetWindowWidth(), ofGetWindowHeight(), GL_LUMINANCE);
-//    mask.clear();
+    laborFbo.clear();
+    leisureFbo.clear();
 //    mask.begin();
     
 //    ofSetColor(0, 0, 0);
@@ -110,7 +120,7 @@ void ofApp::draw(){
     if (_time < 10) {
         ofSetBackgroundColor(0,0,0,textAlpha);
         ofSetColor(255,255,255, textAlpha);
-        fonts[0].drawString("HIT SPACEBAR TO GAIN TIME", 320, whMiddle + 50 );
+        fonts[0].drawString("HIT SPACEBAR TO GAIN FREE TIME", 220, whMiddle + 50 );
         if (_time >= 3) {
             textAlpha -= 2;
             if (textAlpha <= 0) {
@@ -126,7 +136,7 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if (key == ' ') {
-        laborWidth -= 10.0;
+        laborWidth -= 15.0;
     }
 
 }

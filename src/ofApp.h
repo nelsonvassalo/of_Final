@@ -30,6 +30,7 @@ class ofApp : public ofBaseApp{
     ofImage labor;
     ofImage leisure;
     ofImage white;
+    ofImage office;
     ofxAlphaMaskTexture *laborMask;
     ofxAlphaMaskTexture *leisureMask;
     ofFbo leisureFbo;

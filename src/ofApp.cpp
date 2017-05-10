@@ -15,7 +15,7 @@ int wh, ww, whMiddle, wwMiddle, textAlpha, _time;
 //--------------------------------------------------------------
 void ofApp::setup(){
 //    ofSetWindowShape(1920, 1080);
-    ofSetWindowShape(1440, 800);
+    ofSetWindowShape(1920, 1080);
     ofBackground(0);
     ofEnableAlphaBlending();
     wh = ofGetWindowHeight();
@@ -28,8 +28,6 @@ void ofApp::setup(){
     laborFbo.allocate(ww, wh);
     
     
-    
-    
     track.load("11.mp3");
     
     for (int i= 0; i < WORDS_SIZE; i++) {
@@ -37,6 +35,7 @@ void ofApp::setup(){
     }
     track.play();
     go4.load("g4.jpg");
+    office.load("office.jpg");
     labor.load("labor.png");
     leisure.load("leisure.png");
     white.load("white.png");
@@ -59,11 +58,11 @@ void ofApp::setup(){
     
 //    leisure.draw(0, 851);
     
-    laborMask = new ofxAlphaMaskTexture(white.getTexture(),
+    laborMask = new ofxAlphaMaskTexture(office.getTexture(),
                                     laborFbo.getTexture(),
                                     labor.getTexture());
     
-    leisureMask = new ofxAlphaMaskTexture(white.getTexture(),leisureFbo.getTexture(),                                          leisure.getTexture());
+    leisureMask = new ofxAlphaMaskTexture(go4.getTexture(),leisureFbo.getTexture(),                                          leisure.getTexture());
     
     
     
@@ -150,13 +149,15 @@ void ofApp::draw(){
     
     ofPushMatrix();
 //        ofTranslate(500, 0);
-        ofScale(ofClamp(leisureScale, 0.1, 2.44), 2.44);
+        ofScale(ofClamp(leisureScale, 0.1, 2.44), 1.0);
+//        ofTranslate(1920, 0);
+
         leisureMask->draw(500, 0);
     ofPopMatrix();
     
     
     ofPushMatrix();
-        ofScale(ofClamp(laborScale, 0.1, 2.44), 2.44);
+        ofScale(ofClamp(laborScale, 0.1, 2.44), 1.0);
         laborMask->draw(0,0);
     ofPopMatrix();
     
@@ -165,7 +166,7 @@ void ofApp::draw(){
    
    
 
-    if (_time < 10) {
+    if (_time < 6) {
         ofClear(0);
         ofSetBackgroundColor(0,0,0,textAlpha);
         ofSetColor(255,255,255, textAlpha);
